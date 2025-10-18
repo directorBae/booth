@@ -1,27 +1,30 @@
 #include <SPI.h>
 #include <SD.h>
 
+// === ESP32-S3 Master Configuration ===
+// GPIO Available: 0-21, 26-48
+
 // === SD Card Pin Settings ===
-const int PIN_MISO = 1;
-const int PIN_MOSI = 6;
-const int PIN_SCK = 7;
-const int PIN_CS_SD = 8;
+const int PIN_MISO = 37;
+const int PIN_MOSI = 35;
+const int PIN_SCK = 36;
+const int PIN_CS_SD = 34;
 const uint32_t SD_SPI_HZ = 40000000;
 
 // === SPI for Slaves ===
-const int SPI_MOSI = 15; // Master Out Slave In
-const int SPI_SCK = 3;   // Clock
-const int SPI_SYNC = 16; // Sync signal (all slaves show() together)
+const int SPI_MOSI = 11; // Master Out Slave In
+const int SPI_SCK = 12;  // Clock
+const int SPI_SYNC = 13; // Sync signal (all slaves show() together)
 
 // 12 Chip Select pins (one per slave)
-const int CS_PINS[12] = {1, 2, 25, 11, 24, 23, 0, 27, 4, 5, 28, 12};
+const int CS_PINS[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15};
 
 // === Button Pin Settings ===
-const int BUTTON_FILE_1 = 10;
-const int BUTTON_FILE_2 = 9;
-const int BUTTON_FILE_3 = 13;
-const int BUTTON_FILE_4 = 14;
-const int BUTTON_STOP = 26;
+const int BUTTON_FILE_1 = 38;
+const int BUTTON_FILE_2 = 39;
+const int BUTTON_FILE_3 = 40;
+const int BUTTON_FILE_4 = 41;
+const int BUTTON_STOP = 42;
 
 // === LED Settings ===
 const int LEDS_PER_ROW = 180;

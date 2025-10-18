@@ -1,14 +1,17 @@
 #include <FastLED.h>
 #include <SPI.h>
 
+// === ESP32-C5 Slave Configuration ===
+// GPIO Available: 0-15, 23-28 (avoid 16-22)
+
 // === Slave ID (각 Slave마다 다르게 설정) ===
 const int SLAVE_ID = 1; // 1~12 중 하나로 설정
 
-// === SPI Pin Settings ===
-const int SPI_MOSI = 15; // Master에서 데이터 수신
-const int SPI_SCK = 3;   // Clock
+// === SPI Pin Settings (ESP32-C5) ===
+const int SPI_MOSI = 11; // Master에서 데이터 수신
+const int SPI_SCK = 12;  // Clock
 const int SPI_CS = 7;    // Chip Select (Master의 CS_PINS[x]와 연결)
-const int SPI_SYNC = 16; // Sync signal (모든 Slave 공통)
+const int SPI_SYNC = 13; // Sync signal (모든 Slave 공통)
 
 // === LED Settings ===
 const int LED_PIN = 8;           // WS2812 데이터 핀

@@ -62,6 +62,7 @@ BinFileHeader fileHeader;
 volatile bool syncReceived = false;
 bool frameReady = false;
 bool isPlaying = false;
+bool isStaticImage = false; // 한 프레임짜리 이미지 여부
 uint8_t currentFileNum = 0;
 uint32_t currentFrame = 0;
 
@@ -160,6 +161,15 @@ void handleCommand(uint8_t command)
 {
     if (command >= 1 && command <= 4)
     {
+        // 다른 파일 재생 중이면 먼저 정지
+        if (isPlaying && currentFileNum != command)
+        {
+            Serial.printf("\n[SWITCH] Child #%d: Stopping file %d before playing file %d\n",
+                          STRIP_ID, currentFileNum, command);
+            stopPlayback();
+            delay(50); // 안정화 대기
+        }
+
         // 파일 1~4 재생
         startPlayback(command);
     }
@@ -221,9 +231,24 @@ void startPlayback(uint8_t fileNum)
     currentFileNum = fileNum;
     currentFrame = 0;
     isPlaying = true;
-    frameReady = true;
 
-    Serial.printf("  ✓ Child #%d ready to play file %d\n", STRIP_ID, fileNum);
+    // 한 프레임짜리는 정적 이미지로 표시 (무한 반복)
+    if (fileHeader.frameCount == 1)
+    {
+        isStaticImage = true;
+        Serial.printf("  ✓ Child #%d: Static image detected (1 frame)\n", STRIP_ID);
+        Serial.println("  Image will be displayed continuously (infinite loop)");
+
+        // 첫 프레임 읽기
+        readNextFrame();
+        frameReady = false; // SYNC 신호 대기
+    }
+    else
+    {
+        isStaticImage = false;
+        frameReady = true;
+        Serial.printf("  ✓ Child #%d ready to play video file %d (infinite loop)\n", STRIP_ID, fileNum);
+    }
 }
 
 void stopPlayback()
@@ -234,6 +259,7 @@ void stopPlayback()
     }
 
     isPlaying = false;
+    isStaticImage = false;
     currentFileNum = 0;
     currentFrame = 0;
 
@@ -249,16 +275,21 @@ void readNextFrame()
     if (!sdFile || !isPlaying)
         return;
 
-    // 루프 재생
+    // 루프 재생 (동영상/이미지 모두)
     if (currentFrame >= fileHeader.frameCount)
     {
-        Serial.printf("\n[LOOP] Child #%d restarting playback...\n", STRIP_ID);
         currentFrame = 0;
         if (!sdFile.seek(HEADER_SIZE))
         {
             Serial.println("  ✗ Failed to seek to start");
             stopPlayback();
             return;
+        }
+
+        // 루프 시작 로그 (동영상만, 이미지는 매번 출력하면 스팸)
+        if (!isStaticImage)
+        {
+            Serial.printf("\n[LOOP] Child #%d restarting playback...\n", STRIP_ID);
         }
     }
 

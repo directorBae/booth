@@ -20,6 +20,8 @@ HardwareSerial SerialUART(1); // Serial1 사용
 
 // === 재생 설정 ===
 const unsigned long FRAME_DELAY_MS = 44; // 약 22 FPS (1000ms / 22 = 45ms)
+                                         // ※ 매 프레임마다 SYNC 신호 전송
+                                         // → Child들이 동시에 FastLED.show() 호출
 const unsigned long DEBOUNCE_DELAY = 200;
 
 // === 전역 변수 ===

@@ -71,6 +71,13 @@ const size_t STRIP_BYTES = LEDS_PER_STRIP * 3; // 4320 bytes
 
 HardwareSerial SerialUART(1); // Serial1 사용
 
+// === 함수 프로토타입 선언 ===
+void IRAM_ATTR onSyncInterrupt();
+void handleCommand(uint8_t command);
+void startPlayback(uint8_t fileNum);
+void stopPlayback();
+void readNextFrame();
+
 void setup()
 {
     Serial.begin(115200);
